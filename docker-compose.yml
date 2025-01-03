@@ -1,0 +1,88 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+      - uploads:/usr/src/app/uploads
+      - pdf_tickets:/usr/src/app/pdf_tickets
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://prisma:prisma@postgres:5432/prismadb?schema=public
+      - API_URL=http://backend:3000
+      #- API_URL=http://localhost:3000
+      - FLASK_URL=http://flask-api:5000
+      #- FLASK_URL=http://localhost:5000
+      - EMAIL_HOST=smtp.hostinger.com
+      - EMAIL_USER=info@eventbuster.de
+      - EMAIL_PASS=R65k88KN6jBXqnK$
+      # - FRONTEND_URL=http://localhost:4200
+      - FRONTEND_URL=https://eventbuster.de
+
+    depends_on:
+      - postgres
+
+  flask-api:
+    build:
+      context: ./pythonBackend
+      dockerfile: Dockerfile
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./pythonBackend:/app
+      - uploads:/usr/src/app/uploads
+      - pdf_tickets:/app/pdf_tickets
+    environment:
+      - FLASK_ENV=development
+      - API_URL=http://flask-api:5000
+
+    depends_on:
+      - postgres
+
+  # prisma-studio:
+  #   image: node:16
+  #   working_dir: /usr/src/app
+  #   volumes:
+  #     - ./backend:/usr/src/app
+  #   command: ['npx', 'prisma', 'studio']
+  #   ports:
+  #     - '5555:5555'
+  #   environment:
+  #     - DATABASE_URL=postgresql://prisma:prisma@postgres:5432/prismadb
+  #   depends_on:
+  #     - backend
+
+  postgres:
+    image: postgres:16
+    ports:
+      - 6500:5432
+    environment:
+      POSTGRES_USER: prisma
+      POSTGRES_PASSWORD: prisma
+      POSTGRES_DB: prismadb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "4200:4200"
+  #   environment:
+  #     - NEXT_PUBLIC_API_URL=http://nginx/api
+  #     - NEXT_PUBLIC_FLASK_API_URL=http://nginx/flask
+  #     - NEXT_PUBLIC_PAYPAL_CLIENT_ID=AeD7YFMWG3lG379d1KTW2L51VrYvZ3zYeF5Zou41YGtPTCD3EHZYe0KisTjCGCgQbiPh5GRynlsIDMna
+  #   depends_on:
+  #     - backend
+  #     - flask-api
+  #   restart: always
+
+volumes:
+  postgres_data:
+  uploads:
