@@ -3,7 +3,7 @@ import { PrismaClient, User } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const userRepository = {
-  async createUser(email: string, password: string): Promise<User> {
+  async create(email: string, password: string): Promise<User> {
     return prisma.user.create({
       data: {
         email,
@@ -32,7 +32,7 @@ const userRepository = {
     });
   },
 
-  async updateUser(id: number, data: Partial<User>): Promise<User> {
+  async update(id: number, data: Partial<User>): Promise<User> {
     return prisma.user.update({
       where: {
         id,
@@ -41,7 +41,7 @@ const userRepository = {
     });
   },
 
-  async deleteUser(id: number): Promise<User> {
+  async delete(id: number): Promise<User> {
     return prisma.user.delete({
       where: {
         id,

@@ -12,12 +12,21 @@
       "error",
       { "ignores": ["modules"] }
     ],
+    "eslint-plugin-import/prefer-default-export": "off",
+    "prefer-default-export": "off",
+    "import/prefer-default-export": "off",
     "no-unused-vars": "off",
     "no-console": "warn",
-    "no-process-exit": "off"
+    "no-process-exit": "off",
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
   },
   "parserOptions": {
     "ecmaVersion": 2021,
     "sourceType": "module"
-  }
+  },
+  "settings": {}
 }
