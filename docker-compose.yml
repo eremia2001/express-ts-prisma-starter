@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   backend:
     build:
@@ -10,52 +9,17 @@ services:
       - ./backend:/usr/src/app
       - /usr/src/app/node_modules
       - uploads:/usr/src/app/uploads
-      - pdf_tickets:/usr/src/app/pdf_tickets
     environment:
-      - NODE_ENV=development
       - DATABASE_URL=postgresql://prisma:prisma@postgres:5432/prismadb?schema=public
-      - API_URL=http://backend:3000
-      #- API_URL=http://localhost:3000
-      - FLASK_URL=http://flask-api:5000
-      #- FLASK_URL=http://localhost:5000
       - EMAIL_HOST=smtp.hostinger.com
       - EMAIL_USER=info@eventbuster.de
       - EMAIL_PASS=R65k88KN6jBXqnK$
-      # - FRONTEND_URL=http://localhost:4200
-      - FRONTEND_URL=https://eventbuster.de
+      - FRONTEND_URL=http://localhost:4200
+      - ENV=5000
+      - NODE_ENV=development
 
     depends_on:
       - postgres
-
-  flask-api:
-    build:
-      context: ./pythonBackend
-      dockerfile: Dockerfile
-    ports:
-      - '5000:5000'
-    volumes:
-      - ./pythonBackend:/app
-      - uploads:/usr/src/app/uploads
-      - pdf_tickets:/app/pdf_tickets
-    environment:
-      - FLASK_ENV=development
-      - API_URL=http://flask-api:5000
-
-    depends_on:
-      - postgres
-
-  # prisma-studio:
-  #   image: node:16
-  #   working_dir: /usr/src/app
-  #   volumes:
-  #     - ./backend:/usr/src/app
-  #   command: ['npx', 'prisma', 'studio']
-  #   ports:
-  #     - '5555:5555'
-  #   environment:
-  #     - DATABASE_URL=postgresql://prisma:prisma@postgres:5432/prismadb
-  #   depends_on:
-  #     - backend
 
   postgres:
     image: postgres:16
@@ -67,7 +31,18 @@ services:
       POSTGRES_DB: prismadb
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+  # prisma-studio:
+  #   image: node:16
+  #   working_dir: /usr/src/app
+  #   volumes:
+  #     - ./backend:/usr/src/app
+  #   command: [ 'npx', 'prisma', 'studio' ]
+  #   ports:
+  #     - '5555:5555'
+  #   environment:
+  #     - DATABASE_URL=postgresql://prisma:prisma@postgres:5432/prismadb
+  #   depends_on:
+  #     - backend
   # frontend:
   #   build:
   #     context: ./frontend

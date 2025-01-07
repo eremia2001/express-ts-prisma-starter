@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+      - uploads:/usr/src/app/uploads
+      - pdf_tickets:/usr/src/app/pdf_tickets
+    environment:
+      - DATABASE_URL=postgresql://prisma:prisma@postgres:5432/prismadb?schema=public
+      - EMAIL_HOST=smtp.hostinger.com
+      - EMAIL_USER=info@eventbuster.de
+      - EMAIL_PASS=R65k88KN6jBXqnK$
+      - FRONTEND_URL=http://localhost:4200
+
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16
+    ports:
+      - 6500:5432
+    environment:
+      POSTGRES_USER: prisma
+      POSTGRES_PASSWORD: prisma
+      POSTGRES_DB: prismadb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://nginx/api
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  postgres_data:
+  uploads:

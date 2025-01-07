@@ -1,27 +1,34 @@
-# Verwende das offizielle Node.js 14 Image als Basis
-FROM node:16
+# Verwende das Node.js 16 Image als Basis
+FROM node:18-alpine
 
 # Arbeitsverzeichnis im Container festlegen
 WORKDIR /usr/src/app
 
-# Installiere nodemon global
-RUN npm install -g nodemon
-
-# Kopiere package.json und package-lock.json
+# Kopiere nur die package.json und package-lock.json, um Cache bei Abhängigkeiten zu nutzen
 COPY package*.json ./
 
-# Installiere alle Node.js Abhängigkeiten
+# Installiere nur Produktionsabhängigkeiten für das Build-Image
 RUN npm install
 
-# Kopiere den restlichen Quellcode des Projekts in das Arbeitsverzeichnis
+
+
+# Prisma-Schema hinzufügen
+COPY prisma ./prisma
+
+# Erstelle Prisma-Client
+RUN npx prisma generate
+
+# Kopiere den gesamten Projektcode in das Arbeitsverzeichnis
 COPY . .
 
-
-# Erstellen Sie das Uploads-Verzeichnis
+# Erstelle das Uploads-Verzeichnis
 RUN mkdir -p uploads
 
-# Exponiere den Port, den dein Server benutzt
+# TypeScript-Build (Output kommt in dist/)
+RUN npm run build
+
+# Exponiere den Port, den der Server nutzt
 EXPOSE 3000
 
-# Befehl zum Starten deines Node.js Servers mit nodemon
-CMD ["sh", "-c", "npx prisma migrate deploy && npx prisma generate && nodemon src/app.js"]
+# CMD unterscheidet sich in dev/prod. `NODE_ENV` wird in docker-compose definiert.
+CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"development\" ]; then nodemon dist/core/server.js; else node dist/core/server.js; fi"]
