@@ -7,7 +7,6 @@ services:
       - '3000:3000'
     volumes:
       - ./backend:/usr/src/app
-      - /usr/src/app/node_modules
       - uploads:/usr/src/app/uploads
     environment:
       - DATABASE_URL=postgresql://prisma:prisma@postgres:5432/prismadb?schema=public
@@ -15,7 +14,6 @@ services:
       - EMAIL_USER=info@eventbuster.de
       - EMAIL_PASS=R65k88KN6jBXqnK$
       - FRONTEND_URL=http://localhost:4200
-      - ENV=5000
       - NODE_ENV=development
 
     depends_on:
@@ -31,6 +29,7 @@ services:
       POSTGRES_DB: prismadb
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
   # prisma-studio:
   #   image: node:16
   #   working_dir: /usr/src/app
