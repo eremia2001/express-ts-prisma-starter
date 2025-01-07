@@ -10,6 +10,10 @@ const createApp = () => {
     res.send('Hello, ESM with TypeScriptss!ss123');
   });
 
+  app.get('health', (req, res) => {
+    res.json({ status: 'OK', message: 'Server läuft reibungslos' });
+  });
+
   return app;
 };
 
