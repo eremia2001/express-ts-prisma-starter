@@ -1,5 +1,7 @@
 import userRepository from './user.repository';
 
+// Business-Logik für User-Operationen
+
 const userService = {
   getAllUsers: async () => userRepository.getUsers(),
 
@@ -10,6 +12,8 @@ const userService = {
     }
     return userRepository.create(email, password);
   },
+
+  getUserById: async (id: number) => userRepository.getUserById(id),
 
   // /**
   //  * Gibt alle User zurück.

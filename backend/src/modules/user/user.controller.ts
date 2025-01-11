@@ -27,3 +27,12 @@ export const createUser: RequestHandler = async (req, res, next) => {
     next(err);
   }
 };
+
+export const getUserById: RequestHandler = async (req, res, next) => {
+  try {
+    const user = await userService.getUserById(parseInt(req.params.id));
+    res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
